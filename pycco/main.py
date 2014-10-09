@@ -288,7 +288,7 @@ languages = {
 
     ".cpp": { "name": "cpp", "symbol": "//"},
     
-    ".glsl": {"name": "glsl", "symbol": "//$"},
+    ".glsl": {"name": "glsl", "symbol": "//-"},
 
     ".js": { "name": "javascript", "symbol": "//",
         "multistart": "/*", "multiend": "*/"},
