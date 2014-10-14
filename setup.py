@@ -2,13 +2,13 @@ from setuptools import setup, find_packages
 
 setup(
         name = "Pycco",
-        version = "0.3.0",
+        version = "1.0.0",
         description = """A Python port of Docco: the original quick-and-dirty,
         hundred-line-long, literate-programming-style documentation generator.
         """,
-        author = "Nick Fitzgerald",
-        author_email = "fitzgen@gmail.com",
-        url = "http://fitzgen.github.com/pycco",
+        author = "Clement Jacob",
+        author_email = "clement.jacob@allegorithmic.com",
+        url = "https://github.com/AllegorithmicSAS/pycco",
         packages = find_packages(),
         entry_points = {
             'console_scripts': [
