@@ -33,7 +33,7 @@ Or, to install the latest source
 
 # === Main Documentation Generation Functions ===
 
-def generate_documentation(source, outdir=None, preserve_paths=True,
+def generate_documentation(source, pycco_template, outdir=None, preserve_paths=True,
                            language=None):
     """
     Generate the documentation for a source file by reading it in, splitting it
@@ -47,7 +47,7 @@ def generate_documentation(source, outdir=None, preserve_paths=True,
     language = get_language(source, code, language=language)
     sections = parse(source, code, language)
     highlight(source, sections, language, preserve_paths=preserve_paths, outdir=outdir)
-    return generate_html(source, sections, preserve_paths=preserve_paths, outdir=outdir)
+    return generate_html(source, sections, pycco_template, preserve_paths=preserve_paths, outdir=outdir)
 
 def parse(source, code, language):
     """
@@ -223,7 +223,7 @@ def highlight(source, sections, language, preserve_paths=True, outdir=None):
 
 # === HTML Code generation ===
 
-def generate_html(source, sections, preserve_paths=True, outdir=None):
+def generate_html(source, sections, pycco_template, preserve_paths=True, outdir=None):
     """
     Once all of the code is finished highlighting, we can generate the HTML file
     and write out the documentation. Pass the completed sections into the
@@ -387,19 +387,13 @@ def ensure_directory(directory):
 def template(source):
     return lambda context: pystache.render(source, context)
 
-# Create the template that we will use to generate the Pycco HTML page.
-pycco_template = template(pycco_resources.html)
-
-# The CSS styles we'd like to apply to the documentation.
-pycco_styles = pycco_resources.css
-
 # The start of each Pygments highlight block.
 highlight_start = "<div class=\"highlight\"><pre>"
 
 # The end of each Pygments highlight block.
 highlight_end = "</pre></div>"
 
-def process(sources, preserve_paths=True, outdir=None, language=None):
+def process(sources, theme, preserve_paths=True, outdir=None, language=None):
     """For each source file passed as argument, generate the documentation."""
 
     if not outdir:
@@ -409,11 +403,15 @@ def process(sources, preserve_paths=True, outdir=None, language=None):
     # original list when monitoring for changed files.
     sources = sorted(sources)
 
+    # Create HTML template for given theme
+    pycco_template = template(pycco_resources.themes[theme][1])
+
     # Proceed to generating the documentation.
     if sources:
         ensure_directory(outdir)
         css = open(path.join(outdir, "pycco.css"), "w")
-        css.write(pycco_styles)
+        css_content = pycco_resources.themes[theme][0]
+        css.write(css_content)
         css.close()
 
         def next_file():
@@ -426,7 +424,7 @@ def process(sources, preserve_paths=True, outdir=None, language=None):
                 pass
 
             with open(dest, "w") as f:
-                f.write(generate_documentation(s, preserve_paths=preserve_paths, outdir=outdir,
+                f.write(generate_documentation(s, pycco_template, preserve_paths=preserve_paths, outdir=outdir,
                                                language=language))
 
             print "pycco = %s -> %s" % (s, dest)
@@ -461,7 +459,8 @@ def monitor(sources, opts):
             if event.src_path in absolute_sources:
                 process([absolute_sources[event.src_path]],
                         outdir=opts.outdir,
-                        preserve_paths=opts.paths)
+                        preserve_paths=opts.paths,
+                        theme=opts.theme)
 
     # Set up an observer which monitors all directories for files given on
     # the command line and notifies the handler defined above.
@@ -498,10 +497,15 @@ def main():
     parser.add_option('-l', '--force-language', action='store', type='string',
                       dest='language', default=None,
                       help='Force the language for the given files')
+
+    parser.add_option('-t', '--theme', action='store', type='string',
+                      dest='theme', default='classic',
+                      help='Set the generation theme : classic, linear')
+
     opts, sources = parser.parse_args()
 
     process(sources, outdir=opts.outdir, preserve_paths=opts.paths,
-            language=opts.language)
+            language=opts.language, theme=opts.theme)
 
     # If the -w / --watch option was present, monitor the source directories
     # for changes and re-generate documentation for source files whenever they
