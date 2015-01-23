@@ -23,3 +23,7 @@ CoffeeScript (Original) - http://jashkenas.github.com/docco/
 Ruby - http://rtomayko.github.com/rocco/
 
 Sh - http://rtomayko.github.com/shocco/
+
+Added features:
+  - {COMMENT-TOKEN} [DOC-OFF] : Will disabled parsing of documentation + source for the following lines
+  - {COMMENT-TOKEN} [DOC-ON]  : Restore parsing of following lines

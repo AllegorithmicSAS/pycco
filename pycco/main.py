@@ -87,8 +87,20 @@ def parse(source, code, language):
     # Setup the variables to get ready to check for multiline comments
     multi_line = False
     multi_line_delimiters = [language.get("multistart"), language.get("multiend")]
+    disabled = False    
 
     for line in lines:
+
+        # Parse commands first
+        if re.match(language["comment_matcher"], line):
+            if '[DOC-OFF]' in line:
+                disabled = True
+            elif '[DOC-ON]' in line:
+                disabled = False
+                continue # We don't want this line to appear!
+
+        if disabled is True:
+            continue
 
         # Only go into multiline comments section when one of the delimiters is
         # found to be at the start of a line
