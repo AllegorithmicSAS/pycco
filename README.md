@@ -1,3 +1,4 @@
+```
 888888b.
 888   Y88b
 888    888
@@ -9,12 +10,13 @@
                  888
             Y8b d88P
              "Y88P"
+```
 
 Pycco is a Python port of Docco: the original quick-and-dirty, hundred-line-
 long, literate-programming-style documentation generator. For more information,
 see:
 
-http://fitzgen.github.com/pycco/
+https://pycco-docs.github.io/pycco/
 
 Others:
 
